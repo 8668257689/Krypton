@@ -1,0 +1,48 @@
+  1.	use collegeDB
+
+	2.	db.createCollection("students")
+
+	3.	db.students.insertMany([
+      { name: "Riya", branch: "IT", marks: 85 },
+      { name: "Om", branch: "IT", marks: 90 },
+      { name: "Sara", branch: "CS", marks: 70 },
+      { name: "Amit", branch: "CS", marks: 75 },
+      { name: "Neha", branch: "IT", marks: 88 }
+     ])
+
+
+Aggregation:-
+
+
+db.students.aggregate([
+  { $group: { _id: "$branch", avgMarks: { $avg: "$marks" } } }
+])
+
+db.students.aggregate([
+  { $group: { _id: "$branch", total: { $sum: 1 } } }
+])
+
+
+
+MapReduce:-
+
+var map = function() { emit(this.branch, this.marks); };
+var reduce = function(key, values) { return Array.avg(values); };
+
+db.students.mapReduce(map, reduce, { out: "avgMarks" })
+db.avgMarks.find()
+
+
+
+Indexing:-
+
+
+db.students.createIndex({ branch: 1 })
+
+db.students.getIndexes()
+
+db.students.dropIndex("branch_1")
+
+db.students.createIndex({ branch: 1, marks: -1 })
+
+db.students.find({ branch: "IT" }).explain("executionStats")
